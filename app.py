@@ -1,6 +1,9 @@
 from flask import Flask, request, Response
 import logging
 
+def clean_twiml(xml_str):
+    return xml_str.encode("utf-8").lstrip()
+
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
@@ -17,7 +20,7 @@ def outbound():
     twiml = f"""<?xml version="1.0" encoding="UTF-8"?><Response><Dial callerId="+18885974354"><Number>{to_number}</Number></Dial></Response>"""
 
     logging.info(f"Responding with: {twiml}")
-    return Response(twiml.encode('utf-8'), content_type="application/xml; charset=utf-8")
+    return Response(clean_twiml(twiml), content_type="application/xml; charset=utf-8")
 
 @app.route("/")
 def index():
