@@ -23,7 +23,7 @@ def outbound():
 """.strip()
 
     logging.info(f"Responding with: {twiml}")
-    return Response(twiml, mimetype="text/xml")
+    return Response(twiml.encode('utf-8'), content_type="application/xml; charset=utf-8")
 
 @app.route("/")
 def index():
