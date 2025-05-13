@@ -12,7 +12,7 @@ def outbound():
             mimetype="text/xml"
         )
 
-    twiml = f"""
+    twiml = twiml = f"""<?xml version="1.0" encoding="UTF-8"?>
     <Response>
         <Dial callerId="+18885974354">
             <Number>{to_number}</Number>
