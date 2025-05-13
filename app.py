@@ -14,13 +14,7 @@ def outbound():
         logging.info(f"Responding with: {msg}")
         return Response(msg.strip(), mimetype="text/xml")
 
-    twiml = f"""<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Dial callerId="+18885974354">
-    <Number>{to_number}</Number>
-  </Dial>
-</Response>
-""".strip()
+    twiml = f"""<?xml version="1.0" encoding="UTF-8"?><Response><Dial callerId="+18885974354"><Number>{to_number}</Number></Dial></Response>"""
 
     logging.info(f"Responding with: {twiml}")
     return Response(twiml.encode('utf-8'), content_type="application/xml; charset=utf-8")
