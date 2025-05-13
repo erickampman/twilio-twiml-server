@@ -12,13 +12,14 @@ def outbound():
             mimetype="text/xml"
         )
 
-    twiml = twiml = f"""<?xml version="1.0" encoding="UTF-8"?>
+    twiml = twiml = f"""
+    <?xml version="1.0" encoding="UTF-8"?>
     <Response>
         <Dial callerId="+18885974354">
             <Number>{to_number}</Number>
         </Dial>
     </Response>
-    """
+    """.strip()
     return Response(twiml, mimetype="text/xml")
 
 @app.route("/")
