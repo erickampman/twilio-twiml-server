@@ -1,34 +1,27 @@
-from flask import Flask, request, Response
-import logging
-
-def clean_twiml(xml_str):
-    return xml_str.encode("utf-8").lstrip()
-
-app = Flask(__name__)
-logging.basicConfig(level=logging.INFO)
+from urllib.parse import urlparse
 
 @app.route("/outbound", methods=["GET", "POST"])
 def outbound():
-    to_number = request.values.get("To", None)
-    logging.info(f"Received request with To={to_number}")
+    to_param = request.values.get("To", "")
+    logging.info(f"Raw To param: {to_param}")
+    logging.info(f"Incoming request values: {request.values}")
+
+    # Try to extract the phone number if it's a SIP URI
+    if to_param.startswith("sip:"):
+        try:
+            parsed = urlparse(to_param)
+            to_number = parsed.path  # e.g. '+15102195558'
+        except Exception as e:
+            logging.error(f"Failed to parse SIP URI: {e}")
+            to_number = ""
+    else:
+        to_number = to_param
 
     if not to_number:
         msg = "<Response><Say>No destination number provided</Say></Response>"
         logging.info(f"Responding with: {msg}")
-        return Response(msg.strip(), mimetype="text/xml")
+        return Response(msg, content_type="application/xml; charset=utf-8")
 
     twiml = f"""<?xml version="1.0" encoding="UTF-8"?><Response><Dial callerId="+18885974354"><Number>{to_number}</Number></Dial></Response>"""
-
-    logging.info(f"Responding with: {twiml}\n")
-    return Response(
-        twiml.encode("utf-8"),
-        headers={"Content-Type": "application/xml; charset=utf-8"}
-    )
-
-
-@app.route("/")
-def index():
-    return "Twilio TwiML Server is running."
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    logging.info(f"Responding with: {twiml}")
+    return Response(twiml.encode("utf-8"), content_type="application/xml; charset=utf-8")
