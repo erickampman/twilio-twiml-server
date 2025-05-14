@@ -4,6 +4,7 @@ import logging
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
+logging.info(f"Starting app.py execution")
 
 @app.route("/outbound", methods=["GET", "POST"])
 def outbound():
